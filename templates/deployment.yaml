@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow-app
+  template:
+    metadata:
+      labels:
+        app: mlflow-app
+    spec:
+      containers:
+        - name: mlflow-app
+          image: docker.io/atcommons/mlflow-server:1.20.0
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 5000
+          env:
+          - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
+            value: "python"
+          livenessProbe:
+            tcpSocket:
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 10 
