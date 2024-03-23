@@ -58,3 +58,7 @@ You can view the list of minikube maintainers at: https://github.com/kubernetes/
 # REVISION: 1
 # TEST SUITE: None
 ```
+
+# Example
+## Image
+![sample image](./images/mlflow-component.png)
