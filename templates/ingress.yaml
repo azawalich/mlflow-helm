@@ -4,11 +4,11 @@ metadata:
     name: mlflow-ingress
     annotations:
       kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/rewrite-target: /$1
+      nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
-    - host: mlflow.f1-app.k8s.io
+    - host: mlflow.f1-platform.k8s.io
       http:
         paths:
           - path: /
@@ -17,4 +17,4 @@ spec:
               service:
                 name: mlflow-service
                 port:
-                  number: 5000
+                  number: 80
