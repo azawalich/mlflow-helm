@@ -71,6 +71,7 @@ You can view the list of minikube maintainers at: https://github.com/kubernetes/
 # 192.168.49.2    my-hello-app.k8s.io
 #
 # check with browser, going to address: http://mlflow.f1-platform.k8s.io
+```
 
 # Example
 ## Image
