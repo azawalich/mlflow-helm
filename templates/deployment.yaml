@@ -1,7 +1,47 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mlflow-deployment
+  name: mlflow-database-deployment
+  namespace: f1-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow-db
+  template:
+    metadata:
+      labels:
+        app: mlflow-db
+    spec:
+      containers:
+      - name: mlflow-db
+        image: docker.io/postgres:16.2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5432
+        livenessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        env:
+        # TODO: move these into secrets
+        - name: POSTGRES_USER
+          value: user
+        - name: POSTGRES_PASSWORD
+          value: password
+        - name: POSTGRES_DB
+          value: mlflowdb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow-app-deployment
   namespace: f1-platform
 spec:
   replicas: 1
@@ -14,18 +54,37 @@ spec:
         app: mlflow-app
     spec:
       containers:
-        - name: mlflow-app
-          image: docker.io/evk02/mlflow:2.4.2
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 80
-          livenessProbe:
-            tcpSocket:
-              port: 80
-            initialDelaySeconds: 15
-            periodSeconds: 10
-          readinessProbe:
-            tcpSocket:
-              port: 80
-            initialDelaySeconds: 15
-            periodSeconds: 10 
+      - name: mlflow-app
+        image: docker.io/evk02/mlflow:2.4.2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+        livenessProbe:
+          tcpSocket:
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        env:
+        - name: MLFLOW_S3_ENDPOINT_URL
+          value: http://minio-service:9000
+        - name: MLFLOW_S3_IGNORE_TLS
+          value: "true"
+        # TODO: find an automated way to generate below in MinIO and move it here programatically
+        # TODO: move these into secrets
+        - name: AWS_ACCESS_KEY_ID
+          value: yH4pBFCIgsJ5CyJKCVKL
+        - name: AWS_SECRET_ACCESS_KEY
+          value: mJsgvX6ePTMJ7Bfoe1TlIaHjp0kDSkwTA66bixlo
+        command: ["mlflow", "server"]
+        args: [
+          "--backend-store-uri", "postgresql://user:password@mlflow-database-service:5432/mlflowdb", 
+          "--serve-artifacts",
+          "--artifacts-destination", "s3://mlflow", 
+          "--host", "0.0.0.0", 
+          "--port", "5000"
+          ]
