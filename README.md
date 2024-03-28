@@ -60,19 +60,25 @@ You can view the list of minikube maintainers at: https://github.com/kubernetes/
 ```
 
 ## 2. VERIFYING INGRESS REDIRECTING TRAFFIC ##
-`curl --resolve "mlflow.f1-platform.k8s.io:80$(minikube ip)" -i http://mlflow.f1-platform.k8s.io`
+`curl --resolve "mlflow-app.f1-platform.k8s.io:80$(minikube ip)" -i http://mlflow-app.f1-platform.k8s.io`
 
 ## 3. VERIFYING INGRESS REDIRECTING TRAFFIC - WITH BROWSER ##
 `vim /etc/hosts`
 ```
 # add the following line: 
-# <minikube_ip>    mlflow.f1-platform.k8s.io
+# <minikube_ip>    mlflow-app.f1-platform.k8s.io
 # e.g. 
 # 192.168.49.2    my-hello-app.k8s.io
 #
-# check with browser, going to address: http://mlflow.f1-platform.k8s.io
+# check with browser, going to address: http://mlflow-app.f1-platform.k8s.io
 ```
 
 # Example
-## Image
-![sample image](./images/mlflow-component.png)
+## Homepage
+![sample image](./images/mlflow-homepage.png)
+
+## Experiment
+![sample image](./images/mlflow-experiment.png)
+
+## Model
+![sample image](./images/mlflow-model.png)
