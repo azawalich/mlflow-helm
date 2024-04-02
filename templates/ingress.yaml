@@ -10,7 +10,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: mlflow-app.f1-platform.k8s.io
+  - host: models.f1-platform.k8s.io
     http:
       paths:
       - path: /

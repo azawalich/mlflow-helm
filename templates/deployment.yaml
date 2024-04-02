@@ -30,7 +30,7 @@ spec:
           initialDelaySeconds: 15
           periodSeconds: 10
         env:
-        # TODO: move these into secrets
+        #TODO: move these into secrets
         - name: POSTGRES_USER
           value: user
         - name: POSTGRES_PASSWORD
@@ -74,8 +74,11 @@ spec:
           value: http://minio-service:9000
         - name: MLFLOW_S3_IGNORE_TLS
           value: "true"
-        # TODO: find an automated way to generate below in MinIO and move it here programatically
-        # TODO: move these into secrets
+        #TODO: add PVC because the data is lost after restart of a service 
+        #TODO: find an automated way to generate below in MinIO and move it here programatically
+        #TODO: move these into secrets
+        #TODO: introduce stuff from here, read it carefully: 
+        #       https://blog.min.io/setting-up-a-development-machine-with-mlflow-and-minio/
         - name: AWS_ACCESS_KEY_ID
           value: yH4pBFCIgsJ5CyJKCVKL
         - name: AWS_SECRET_ACCESS_KEY
