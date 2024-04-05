@@ -41,20 +41,20 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mlflow-app-deployment
+  name: mlflow-dashboard-deployment
   namespace: f1-platform
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mlflow-app
+      app: mlflow-dashboard
   template:
     metadata:
       labels:
-        app: mlflow-app
+        app: mlflow-dashboard
     spec:
       containers:
-      - name: mlflow-app
+      - name: mlflow-dashboard
         image: docker.io/evk02/mlflow:2.4.2
         imagePullPolicy: IfNotPresent
         ports:
