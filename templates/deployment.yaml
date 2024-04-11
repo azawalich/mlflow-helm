@@ -30,11 +30,16 @@ spec:
           initialDelaySeconds: 15
           periodSeconds: 10
         env:
-        #TODO: move these into secrets
         - name: POSTGRES_USER
-          value: user
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-database-secret
+              key: database_username
         - name: POSTGRES_PASSWORD
-          value: password
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-database-secret
+              key: database_password
         - name: POSTGRES_DB
           value: mlflowdb
 ---
@@ -53,6 +58,10 @@ spec:
       labels:
         app: mlflow-dashboard
     spec:
+      initContainers:
+      - name: mlflow-wait-for-database
+        image: docker.io/busybox:1.36.1
+        command: ['sh', '-c', 'echo "Sleeping for 30 seconds..."; sleep 30;']
       containers:
       - name: mlflow-dashboard
         image: docker.io/evk02/mlflow:2.4.2
@@ -70,22 +79,43 @@ spec:
           initialDelaySeconds: 15
           periodSeconds: 10
         env:
+        - name: POSTGRES_DATABASE
+          value: mlflowdb
+        - name: DATABASE_PORT
+          value: "5432"
+        - name: DATABASE_HOST
+          value: mlflow-database-service
         - name: MLFLOW_S3_ENDPOINT_URL
           value: http://minio-service:9000
         - name: MLFLOW_S3_IGNORE_TLS
           value: "true"
         #TODO: add PVC because the data is lost after restart of a service 
-        #TODO: find an automated way to generate below in MinIO and move it here programatically
-        #TODO: move these into secrets
+        # maybe move other binary files (models) to store AND read it from minio in another helm charts
         #TODO: introduce stuff from here, read it carefully: 
         #       https://blog.min.io/setting-up-a-development-machine-with-mlflow-and-minio/
         - name: AWS_ACCESS_KEY_ID
-          value: yH4pBFCIgsJ5CyJKCVKL
+          valueFrom:
+            secretKeyRef:
+              name: minio-dashboard-secret
+              key: access_key
         - name: AWS_SECRET_ACCESS_KEY
-          value: mJsgvX6ePTMJ7Bfoe1TlIaHjp0kDSkwTA66bixlo
+          valueFrom:
+            secretKeyRef:
+              name: minio-dashboard-secret
+              key: secret_key
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-database-secret
+              key: database_username
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-database-secret
+              key: database_password
         command: ["mlflow", "server"]
         args: [
-          "--backend-store-uri", "postgresql://user:password@mlflow-database-service:5432/mlflowdb", 
+          "--backend-store-uri", "postgresql://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOST):$(DATABASE_PORT)/$(POSTGRES_DATABASE)", 
           "--serve-artifacts",
           "--artifacts-destination", "s3://mlflow", 
           "--host", "0.0.0.0", 
