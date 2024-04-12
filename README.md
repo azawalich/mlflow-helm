@@ -78,7 +78,9 @@ You can view the list of minikube maintainers at: https://github.com/kubernetes/
 ![sample image](./images/mlflow-homepage.png)
 
 ## Experiment
-![sample image](./images/mlflow-experiment.png)
+![sample image 2](./images/mlflow-experiment.png)
+![sample image 3](./images/mlflow-experiment2.png)
+![sample image 4](./images/mlflow-experiment3.png)
 
 ## Model
-![sample image](./images/mlflow-model.png)
+![sample image 5](./images/mlflow-model.png)
