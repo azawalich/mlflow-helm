@@ -2,7 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mlflow-database-deployment
-  namespace: f1-platform
+  labels:
+    app: f1-platform
+    component: mlflow-postgres
 spec:
   replicas: 1
   selector:
@@ -47,7 +49,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mlflow-dashboard-deployment
-  namespace: f1-platform
+  labels:
+    app: f1-platform
+    component: mlflow-dashboard
 spec:
   replicas: 1
   selector:
